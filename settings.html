@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    if (localStorage.getItem('anchor_auth') !== 'true') {
+      window.location.href = './';
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Settings · Anchor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy-deep: #0F1A2E; --navy: #1B2A4A; --navy-light: #253A5E;
+      --silver: #A0A7B4; --success: #2ECC71; --danger: #E74C3C;
+      --bg: #F4F6F9; --card-bg: #FFFFFF; --text-primary: #1A1D23;
+      --text-secondary: #6B7280; --radius-lg: 16px; --radius-md: 12px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04);
+    }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--bg);
+      color: var(--text-primary); padding-bottom: 80px;
+      -webkit-font-smoothing: antialiased; line-height: 1.4;
+    }
+    header {
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+      color: white; padding: 16px 20px; display: flex;
+      align-items: center; gap: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .back-btn {
+      background: none; border: none; color: white; font-size: 1.5rem;
+      cursor: pointer; padding: 4px 8px; border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.15); }
+    .logo-icon { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
+    .logo-text { font-size: 1.3rem; font-weight: 700; }
+    main { padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; }
+    .card {
+      background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .card-label {
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 16px;
+    }
+    .setting-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-label { font-weight: 500; }
+    .setting-value { color: var(--text-secondary); }
+
+    .toggle {
+      position: relative; display: inline-block; width: 48px; height: 26px;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc; transition: 0.3s; border-radius: 26px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 20px; width: 20px;
+      left: 3px; bottom: 3px; background-color: white;
+      transition: 0.3s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--navy); }
+    input:checked + .slider:before { transform: translateX(22px); }
+
+    .btn-primary {
+      width: 100%; padding: 14px; background: var(--navy); color: white;
+      border: none; border-radius: 50px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--navy-light); }
+    .btn-danger-outline {
+      width: 100%; padding: 14px; background: transparent; color: var(--danger);
+      border: 1.5px solid var(--danger); border-radius: 50px;
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-danger-outline:hover { background: var(--danger); color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="window.location.href='./'">←</button>
+    <img src="./assets/logo.png" alt="Anchor" class="logo-icon">
+    <span class="logo-text">Anchor</span>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="card-label">Preferences</div>
+      <div class="setting-row">
+        <span class="setting-label">Sound Effects</span>
+        <label class="toggle">
+          <input type="checkbox" id="soundToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Notifications</span>
+        <span class="setting-value" id="notifStatus">Checking...</span>
+      </div>
+      <div class="setting-row" id="notifActionRow" style="display:none;">
+        <button class="btn-primary" id="notifActionBtn" style="width:100%;">Enable Notifications</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Account</div>
+      <button class="btn-danger-outline" id="signOutBtn">Sign Out</button>
+    </div>
+  </main>
+
+  <script>
+    // ====== Sound Toggle ======
+    const soundToggle = document.getElementById('soundToggle');
+    if (localStorage.getItem('soundEnabled') === 'false') {
+      soundToggle.checked = false;
+    } else {
+      soundToggle.checked = true;
+      if (!localStorage.getItem('soundEnabled')) {
+        localStorage.setItem('soundEnabled', 'true');
+      }
+    }
+    soundToggle.addEventListener('change', () => {
+      localStorage.setItem('soundEnabled', soundToggle.checked);
+    });
+
+    // ====== Notification Management ======
+    const notifStatus = document.getElementById('notifStatus');
+    const notifActionRow = document.getElementById('notifActionRow');
+    const notifActionBtn = document.getElementById('notifActionBtn');
+    const API_URL = 'https://YOUR_VPS_IP_OR_DOMAIN:5000'; // update when backend is ready
+    const API_KEY = 'YOUR_ANCHOR_API_KEY';
+
+    async function updateNotifUI() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        notifStatus.textContent = 'Not supported';
+        notifActionRow.style.display = 'none';
+        return;
+      }
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) {
+        notifStatus.textContent = 'Service Worker not ready';
+        notifActionRow.style.display = 'none';
+        return;
+      }
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        notifStatus.textContent = 'Enabled';
+        notifActionRow.style.display = 'block';
+        notifActionBtn.textContent = 'Unsubscribe from notifications';
+        notifActionBtn.className = 'btn-danger-outline';
+        notifActionBtn.onclick = async () => {
+          await sub.unsubscribe();
+          try {
+            await fetch(`${API_URL}/unsubscribe`, {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ endpoint: sub.endpoint })
+            });
+          } catch(e) {}
+          updateNotifUI();
+        };
+      } else {
+        notifStatus.textContent = 'Disabled';
+        notifActionRow.style.display = 'block';
+        notifActionBtn.textContent = 'Enable Notifications';
+        notifActionBtn.className = 'btn-primary';
+        notifActionBtn.onclick = async () => {
+          const vapidResp = await fetch(`${API_URL}/vapid-public-key`, { headers: { Authorization: `Bearer ${API_KEY}` } });
+          const { publicKey } = await vapidResp.json();
+          const convertedKey = urlBase64ToUint8Array(publicKey);
+          const newSub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: convertedKey });
+          await fetch(`${API_URL}/subscribe`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(newSub)
+          });
+          updateNotifUI();
+        };
+      }
+    }
+    updateNotifUI();
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+    }
+
+    // ====== Sign Out ======
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+      localStorage.removeItem('anchor_auth');
+      window.location.href = './';
+    });
+  </script>
+</body>
+</html>
