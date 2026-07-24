@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Trade History · Anchor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <title>Trade History · Anchor</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy-deep: #0F1A2E; --navy: #1B2A4A; --navy-light: #253A5E;
-      --silver: #A0A7B4; --success: #2ECC71; --danger: #E74C3C;
-      --bg: #F4F6F9; --card-bg: #FFFFFF; --text-primary: #1A1D23;
+      --navy-deep: #0F1A2E; --navy: #1B2A4A; --silver: #A0A7B4;
+      --success: #2ECC71; --danger: #E74C3C; --bg: #F4F6F9;
+      --card-bg: #FFFFFF; --text-primary: #1A1D23;
       --text-secondary: #6B7280; --radius-lg: 16px;
       --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04);
-      --shadow-card-hover: 0 2px 6px rgba(0,0,0,0.06), 0 12px 24px rgba(0,0,0,0.06);
-      --transition: 0.2s ease;
     }
     body {
       font-family: 'Inter', sans-serif; background: var(--bg);
@@ -28,10 +26,7 @@
       align-items: center;
     }
     .header-left { display: flex; align-items: center; gap: 10px; }
-    .logo-icon {
-      width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.15);
-      display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;
-    }
+    .logo-icon { width: 36px; height: 36px; border-radius: 8px; object-fit: contain; }
     .logo-text { font-size: 1.3rem; font-weight: 700; }
     .status-pill {
       background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
@@ -82,11 +77,11 @@
   <div id="app">
     <header>
       <div class="header-left">
-        <div class="logo-icon">⚓</div>
+        <img src="./assets/logo.png" alt="Anchor" class="logo-icon">
         <span class="logo-text">Anchor</span>
       </div>
       <div class="status-pill">
-        <span class="status-dot online"></span> Demo
+        <span class="status-dot offline"></span> Offline
       </div>
     </header>
 
@@ -94,9 +89,7 @@
       <div class="card">
         <div class="card-label">Trade History</div>
         <div id="historyList">
-          <div class="trade-row"><span>2025-07-20 14:22</span><span>EUR/USD Long</span><span>Entry 1.1050 → Exit 1.1095</span><span class="pnl-pill positive">+$5.10</span></div>
-          <div class="trade-row"><span>2025-07-20 08:30</span><span>EUR/USD Short</span><span>Entry 1.1020 → Exit 1.1045</span><span class="pnl-pill negative">-$3.80</span></div>
-          <div class="trade-row"><span>2025-07-19 10:45</span><span>EUR/USD Long</span><span>Entry 1.1070 → Exit 1.1110</span><span class="pnl-pill positive">+$4.20</span></div>
+          <div class="trade-row placeholder">No trades yet.</div>
         </div>
       </div>
     </main>
@@ -112,5 +105,12 @@
       </a>
     </nav>
   </div>
+
+  <script src="./app.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      if (typeof loadHistory === 'function') loadHistory();
+    });
+  </script>
 </body>
 </html>
