@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <title>Trade History · Anchor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy-deep: #0F1A2E; --navy: #1B2A4A; --silver: #A0A7B4;
+      --success: #2ECC71; --danger: #E74C3C; --bg: #F4F6F9;
+      --card-bg: #FFFFFF; --text-primary: #1A1D23;
+      --text-secondary: #6B7280; --radius-lg: 16px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04);
+    }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--bg);
+      color: var(--text-primary); padding-bottom: 80px; -webkit-font-smoothing: antialiased;
+    }
+    header {
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+      color: white; padding: 16px 20px; display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 36px; height: 36px; border-radius: 8px; object-fit: contain; }
+    .logo-text { font-size: 1.3rem; font-weight: 700; }
+    .status-pill {
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+      padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-dot.online { background: var(--success); }
+    .status-dot.offline { background: var(--danger); }
+    main { padding: 20px 16px; }
+    .card {
+      background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .card-label {
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 12px;
+    }
+    .trade-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid #f5f5f5; font-size: 0.85rem; gap: 8px;
+    }
+    .trade-row:last-child { border-bottom: none; }
+    .pnl-pill {
+      padding: 3px 10px; border-radius: 20px; font-weight: 600; font-size: 0.8rem;
+    }
+    .pnl-pill.positive { background: rgba(46,204,113,0.1); color: var(--success); }
+    .pnl-pill.negative { background: rgba(231,76,60,0.1); color: var(--danger); }
+    nav {
+      position: fixed; bottom: 0; left: 0; width: 100%; display: flex;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+      z-index: 99; padding: 8px 0; border-top: 1px solid rgba(0,0,0,0.04);
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; padding: 6px 0; text-decoration: none; color: var(--silver);
+      font-size: 0.7rem; font-weight: 500; position: relative;
+    }
+    .nav-item svg { width: 24px; height: 24px; }
+    .nav-item.active { color: var(--navy); }
+    .nav-item.active::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 32px; height: 3px; background: var(--navy); border-radius: 0 0 3px 3px;
+    }
+
+    /* Debug panel styles (copied) */
+    #debug-panel {
+      position: fixed; bottom: 90px; right: 16px; width: 90%; max-width: 420px;
+      background: #1e1e2f; color: #e0e0e0; border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 200;
+      font-size: 13px; display: none; flex-direction: column;
+      max-height: 65vh; overflow-y: auto;
+    }
+    #debug-panel.open { display: flex; }
+    #debug-panel .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: #0f1a2e; border-radius: 12px 12px 0 0;
+      font-weight: 600; color: white;
+    }
+    #debug-panel .panel-header button {
+      background: none; border: none; color: #ccc; font-size: 1.5rem; cursor: pointer;
+    }
+    #debug-panel .panel-content {
+      padding: 12px; display: flex; flex-direction: column; gap: 10px;
+    }
+    #debug-panel .section {
+      background: #2a2a3c; border-radius: 8px; padding: 10px 12px;
+    }
+    #debug-panel .section h3 {
+      margin: 0 0 8px 0; font-size: 14px; color: #90a0b0;
+    }
+    #debug-panel .status-line {
+      display: flex; justify-content: space-between; margin-bottom: 4px;
+    }
+    #debug-panel .status-line span:first-child { color: #a0a0b0; }
+    #debug-panel .status-line span:last-child { font-weight: 500; }
+    .debug-btn {
+      position: fixed; bottom: 90px; right: 16px; width: 46px; height: 46px;
+      border-radius: 50%; background: #1e1e2f; color: #ffaa00; font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 199;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="header-left">
+        <img src="./assets/logo.png" alt="Anchor" class="logo-icon">
+        <span class="logo-text">Anchor</span>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot offline"></span> Offline
+      </div>
+    </header>
+
+    <main>
+      <div class="card">
+        <div class="card-label">Trade History</div>
+        <div id="historyList">
+          <div class="trade-row placeholder">No trades yet.</div>
+        </div>
+      </div>
+    </main>
+
+    <nav>
+      <a href="./" class="nav-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="./history.html" class="nav-item active">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>History</span>
+      </a>
+    </nav>
+  </div>
+
+  <button id="debugToggle" class="debug-btn">🐛</button>
+  <div id="debug-panel">
+    <div class="panel-header">
+      <span>Anchor Debug Console</span>
+      <button id="debugClose">&times;</button>
+    </div>
+    <div class="panel-content" id="debugContent">
+      <div class="section">
+        <h3>PWA Status</h3>
+        <div class="status-line"><span>Manifest</span><span id="db-manifest">⏳</span></div>
+        <div class="status-line"><span>Service Worker</span><span id="db-sw">⏳</span></div>
+        <div class="status-line"><span>Icons (192px)</span><span id="db-icons">⏳</span></div>
+        <div class="status-line"><span>Installable</span><span id="db-installable">⏳</span></div>
+      </div>
+      <div class="section">
+        <h3>Errors</h3>
+        <pre id="db-errors" style="white-space:pre-wrap;font-size:12px;max-height:150px;overflow-y:auto;">No errors caught yet.</pre>
+      </div>
+      <div class="section">
+        <h3>Console Log</h3>
+        <pre id="db-log" style="white-space:pre-wrap;font-size:12px;max-height:150px;overflow-y:auto;">Waiting...</pre>
+      </div>
+      <div class="section">
+        <h3>Network Log (last 10)</h3>
+        <pre id="db-network" style="white-space:pre-wrap;font-size:12px;max-height:150px;overflow-y:auto;">Waiting...</pre>
+      </div>
+    </div>
+  </div>
+
+  <script src="./debug.js"></script>
+  <script src="./app.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      if (typeof loadHistory === 'function') loadHistory();
+    });
+  </script>
+</body>
+</html>
