@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1B2A4A">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-72x72.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <title>Anchor Trading</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="logo">
+        <!-- Replace with your actual PNG path -->
+        <img src="/assets/logo.png" alt="Anchor Trading" width="32" height="32">
+        <span>Anchor</span>
+      </div>
+      <div class="status" id="botStatus">● Checking...</div>
+    </header>
+
+    <section class="card" id="equityCard">
+      <div class="card-label">Equity</div>
+      <div class="card-value" id="equityValue">--</div>
+      <div class="card-sub" id="equityChange">--</div>
+    </section>
+
+    <section class="card" id="openTradeCard" style="display:none;">
+      <div class="card-label">Open Trade</div>
+      <div id="openTradeInfo">
+        <div class="trade-header">
+          <span id="tradeInstrument">--</span>
+          <span id="tradeDirection" class="direction-badge">--</span>
+        </div>
+        <div class="trade-details">
+          <span>Entry <strong id="tradeEntry">--</strong></span>
+          <span>SL <strong id="tradeSL">--</strong></span>
+          <span>TP <strong id="tradeTP">--</strong></span>
+        </div>
+        <div class="unrealized" id="tradeUnrealized">--</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-label">Performance (Last 30 Days)</div>
+      <div class="kpi-grid">
+        <div class="kpi"><span>Win Rate</span><strong id="kpiWinRate">--</strong></div>
+        <div class="kpi"><span>Sharpe</span><strong id="kpiSharpe">--</strong></div>
+        <div class="kpi"><span>Profit Factor</span><strong id="kpiPF">--</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-label">Recent Trades</div>
+      <div id="recentTradesList">--</div>
+    </section>
+
+    <div id="actionButtons">
+      <button id="notifBtn" class="btn primary" style="display:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        Enable Notifications
+      </button>
+      <button id="emergencyBtn" class="btn danger" style="display:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Emergency Optimize
+      </button>
+    </div>
+
+    <nav>
+      <a href="/" class="active">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/history.html">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        History
+      </a>
+    </nav>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
